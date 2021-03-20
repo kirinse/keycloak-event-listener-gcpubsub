@@ -1,4 +1,4 @@
-# keycloak-event-listener-rabbitmq
+# keycloak-event-listener-gcpubsub
 
 ##### A Keycloak SPI plugin that publishes events to Google Cloud Pub/Sub.
 

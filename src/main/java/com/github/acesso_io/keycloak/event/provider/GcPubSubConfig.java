@@ -32,7 +32,7 @@ public class GcPubSubConfig {
 		if(config != null && config.get(variableName) != null) {
 			value = config.get(variableName);
 		} else {
-			//try from env variables eg: KK_TO_RMQ_URL:
+			//try from env variables eg: KC_TO_GCP_PROJECTID:
 			String envVariableName = "KC_TO_GCP_" + variableName.toUpperCase();
 			if(System.getenv(envVariableName) != null) {
 				value = System.getenv(envVariableName);
@@ -57,6 +57,7 @@ public class GcPubSubConfig {
 			e.printStackTrace();
 		}
 		return messageAsJson;
+		
 	}
 
 	public String getProjectId() {
