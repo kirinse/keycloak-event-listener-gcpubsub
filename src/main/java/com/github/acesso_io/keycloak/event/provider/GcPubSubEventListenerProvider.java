@@ -87,19 +87,6 @@ public class GcPubSubEventListenerProvider implements EventListenerProvider {
 			}
 		}
 
-		// try {
-		// 	Connection conn = factory.newConnection();
-		// 	Channel channel = conn.createChannel();
-			
-		// 	channel.basicPublish(cfg.getExchange(), routingKey, props, messageString.getBytes());
-		// 	System.out.println("keycloak-to-rabbitmq SUCCESS sending message: " + routingKey);
-		// 	channel.close();
-		// 	conn.close();
-
-		// } catch (Exception ex) {
-		// 	System.err.println("keycloak-to-rabbitmq ERROR sending message: " + routingKey);
-		// 	ex.printStackTrace();
-		// }
 	}
 
 }
