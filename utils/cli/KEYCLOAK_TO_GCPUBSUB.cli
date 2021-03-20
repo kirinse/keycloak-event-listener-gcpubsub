@@ -1,0 +1,11 @@
+embed-server --server-config=standalone-ha.xml --std-out=echo
+batch
+
+/subsystem=keycloak-server/spi=eventsListener/:add
+/subsystem=keycloak-server/spi=eventsListener/provider=keycloak-to-gcpubsub/:add(enabled="true")
+/subsystem=keycloak-server/spi=eventsListener/provider=keycloak-to-gcpubsub/:map-put(name=properties,key=projectId,value="${env.KC_TO_GCP_PROJECTID:identity-test}")
+/subsystem=keycloak-server/spi=eventsListener/provider=keycloak-to-gcpubsub/:map-put(name=properties,key=eventTopicId,value="${env.KC_TO_GCP_EVENTTOPICID:keycloak-events}")
+/subsystem=keycloak-server/spi=eventsListener/provider=keycloak-to-gcpubsub/:map-put(name=properties,key=adminEventTopicId,value="${env.KC_TO_GCP_ADMINEVENTTOPICID:keycloak-events}")
+
+run-batch
+stop-embedded-server
