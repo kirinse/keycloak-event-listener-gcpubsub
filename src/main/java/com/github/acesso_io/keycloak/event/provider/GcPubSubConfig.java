@@ -18,7 +18,7 @@ public class GcPubSubConfig {
 	public static GcPubSubConfig createFromScope(Scope config) {
 		GcPubSubConfig cfg = new GcPubSubConfig();
 		
-		cfg.projectId = resolveConfigVar(config, "projectId", "identity-test");
+		cfg.projectId = resolveConfigVar(config, "projectId", "keycloak-test");
 		cfg.eventTopicId = resolveConfigVar(config, "eventTopicId", "keycloak-events");
 		cfg.adminEventTopicId = resolveConfigVar(config, "adminEventTopicId", "keycloak-events");
         
@@ -57,7 +57,7 @@ public class GcPubSubConfig {
 			e.printStackTrace();
 		}
 		return messageAsJson;
-		
+
 	}
 
 	public String getProjectId() {

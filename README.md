@@ -47,7 +47,7 @@ operationType: "UPDATE"
 #### Set `GOOGLE_APPLICATION_CREDENTIALS` environment variable pointing to your service account credential file
 
 ###### OPTION 1: just configure **ENVIRONMENT VARIABLES**
-  - `KC_TO_GCP_PROJECTID` - default: *identity-test*
+  - `KC_TO_GCP_PROJECTID` - default: *keycloak-test*
   - `KC_TO_GCP_EVENTTOPICID` - default: *keycloak-events*
   - `KC_TO_GCP_ADMINEVENTTOPICID` - default: *keycloak-events*
 
