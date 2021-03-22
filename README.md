@@ -57,7 +57,7 @@ operationType: "UPDATE"
 <spi name="eventsListener">
     <provider name="keycloak-to-gcpubsub" enabled="true">
         <properties>
-            <property name="projectId" value="${env.KC_TO_GCP_PROJECTID:identity-test}"/>
+            <property name="projectId" value="${env.KC_TO_GCP_PROJECTID:keycloak-test}"/>
             <property name="eventTopicId" value="${env.KC_TO_GCP_EVENTTOPICID:keycloak-events}"/>
             <property name="adminEventTopicId" value="${env.KC_TO_GCP_ADMINEVENTTOPICID:keycloak-events}"/>
         </properties>
