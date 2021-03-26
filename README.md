@@ -66,7 +66,5 @@ operationType: "UPDATE"
 ```
 ###### OPTION 3: same effect as OPTION 2 but programatically:
 ```
-echo "yes" | $KEYCLOAK_HOME/bin/jboss-cli.sh --file=$KEYCLOAK_HOME/KEYCLOAK_TO_GCPUBSUB.cli
+echo "yes" | $KEYCLOAK_HOME/bin/jboss-cli.sh --file=$KEYCLOAK_HOME/KEYCLOAK_TO_GCPUBSUB.cli 
 ```
-
-
