@@ -22,12 +22,10 @@ public class GcPubSubEventListenerProviderFactory implements EventListenerProvid
 
 	@Override
 	public void postInit(KeycloakSessionFactory factory) {
-
 	}
 
 	@Override
 	public void close() {
-
 	}
 
 	@Override

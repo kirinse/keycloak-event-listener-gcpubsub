@@ -1,10 +1,9 @@
 package com.github.acesso_io.keycloak.event.provider;
 
-
 import org.keycloak.events.Event;
 import org.keycloak.events.EventListenerProvider;
 import org.keycloak.events.admin.AdminEvent;
-
+import org.jboss.logging.Logger;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.pubsub.v1.Publisher;
 import com.google.protobuf.ByteString;
@@ -17,17 +16,16 @@ import java.util.concurrent.TimeUnit;
 
 public class GcPubSubEventListenerProvider implements EventListenerProvider {
 
+	private static Logger logger = Logger.getLogger(GcPubSubEventListenerProvider.class);
 	private GcPubSubConfig cfg;
-	//private ConnectionFactory factory;
+	// private ConnectionFactory factory;
 
 	public GcPubSubEventListenerProvider(GcPubSubConfig cfg) {
 		this.cfg = cfg;
-
 	}
 
 	@Override
 	public void close() {
-
 	}
 
 	@Override
@@ -48,41 +46,37 @@ public class GcPubSubEventListenerProvider implements EventListenerProvider {
 		String topicId = cfg.getAdminEventTopicId();
 
 		this.publishNotification(topicId, messageString, messageAttributes);
-	}	
+	}
 
-	private void publishNotification(String topicId, String messageString, Map<String, String> attributes) 
-	{
+	private void publishNotification(String topicId, String messageString, Map<String, String> attributes) {
 
 		TopicName topicName = TopicName.of(cfg.getProjectId(), topicId);
 
 		Publisher publisher = null;
 
 		try {
-		// Create a publisher instance with default settings bound to the topic
-		publisher = Publisher.newBuilder(topicName).build();
+			// Create a publisher instance with default settings bound to the topic
+			publisher = Publisher.newBuilder(topicName).build();
 
-		String message = messageString;
-		ByteString data = ByteString.copyFromUtf8(message);
-		PubsubMessage pubsubMessage = PubsubMessage.newBuilder().setData(data).putAllAttributes(attributes).build();
+			String message = messageString;
+			ByteString data = ByteString.copyFromUtf8(message);
+			PubsubMessage pubsubMessage = PubsubMessage.newBuilder().setData(data).putAllAttributes(attributes).build();
 
-		// Once published, returns a server-assigned message id (unique within the topic)
-		ApiFuture<String> messageIdFuture = publisher.publish(pubsubMessage);
-		String messageId = messageIdFuture.get();
-		System.out.println("Published message ID: " + messageId);
-		} 
-		catch (IOException|ExecutionException|InterruptedException ex) {
-			System.err.println("keycloak-to-gcpubsub ERROR sending message: " + attributes);
-			ex.printStackTrace();
-		}
-		finally {
+			// Once published, returns a server-assigned message id (unique within the
+			// topic)
+			ApiFuture<String> messageIdFuture = publisher.publish(pubsubMessage);
+			String messageId = messageIdFuture.get();
+			logger.info("Published message ID: " + messageId);
+		} catch (IOException | ExecutionException | InterruptedException ex) {
+			logger.error("keycloak-to-gcpubsub ERROR sending message: " + attributes, ex);
+		} finally {
 			if (publisher != null) {
 				try {
 					// When finished with the publisher, shutdown to free up resources.
-				publisher.shutdown();
-				publisher.awaitTermination(1, TimeUnit.MINUTES);
+					publisher.shutdown();
+					publisher.awaitTermination(1, TimeUnit.MINUTES);
 				} catch (InterruptedException ex) {
-					System.err.println("keycloak-to-gcpubsub ERROR sending message: " + attributes);
-					ex.printStackTrace();
+					logger.error("keycloak-to-gcpubsub ERROR shutting down publisher: " + attributes, ex);
 				}
 			}
 		}
