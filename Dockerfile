@@ -8,5 +8,5 @@ WORKDIR /tmp/
 RUN     mvn package
 FROM jboss/keycloak:12.0.4
 
-COPY --from=buildereventer  /tmp/target/keycloak-to-gcpubsub-1.0.jar    /opt/jboss/keycloak/standalone/deployments/
+COPY --from=buildereventer  /tmp/target/keycloak-to-gcpubsub-1.0.1.jar    /opt/jboss/keycloak/standalone/deployments/
 COPY ./svc_account.secret /opt/svc_account.secret
