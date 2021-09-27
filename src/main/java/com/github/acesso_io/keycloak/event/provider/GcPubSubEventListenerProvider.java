@@ -1,24 +1,16 @@
 package com.github.acesso_io.keycloak.event.provider;
 
-import com.google.api.gax.core.CredentialsProvider;
-import com.google.api.gax.core.NoCredentialsProvider;
-import com.google.api.gax.grpc.GrpcTransportChannel;
-import com.google.api.gax.rpc.FixedTransportChannelProvider;
-import com.google.api.gax.rpc.TransportChannelProvider;
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
-import org.keycloak.events.Event;
-import org.keycloak.events.EventListenerProvider;
-import org.keycloak.events.EventListenerTransaction;
-import org.keycloak.events.admin.AdminEvent;
-import org.keycloak.models.KeycloakSession;
-
-import org.jboss.logging.Logger;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.pubsub.v1.Publisher;
 import com.google.protobuf.ByteString;
 import com.google.pubsub.v1.PubsubMessage;
 import com.google.pubsub.v1.TopicName;
+import org.jboss.logging.Logger;
+import org.keycloak.events.Event;
+import org.keycloak.events.EventListenerProvider;
+import org.keycloak.events.EventListenerTransaction;
+import org.keycloak.events.admin.AdminEvent;
+import org.keycloak.models.KeycloakSession;
 
 import java.io.IOException;
 import java.util.Map;
@@ -54,7 +46,7 @@ public class GcPubSubEventListenerProvider implements EventListenerProvider {
         EventClientNotificationGcpsMsg msg = EventClientNotificationGcpsMsg.create(event);
         Map<String, String> messageAttributes = GcPubSubAttributes.createMap(event);
         String messageString = GcPubSubConfig.writeAsJson(msg, true);
-        String topicId = cfg.getAdminEventTopicId();
+        String topicId = cfg.getEventTopicId();
 
         this.publishNotification(topicId, messageString, messageAttributes);
     }
@@ -74,7 +66,9 @@ public class GcPubSubEventListenerProvider implements EventListenerProvider {
 
         try {
             // Create a publisher instance with default settings bound to the topic
-            publisher = getPublisher(topicName);
+            publisher = Publisher
+                    .newBuilder(topicName)
+                    .build();
             ByteString data = ByteString.copyFromUtf8(messageString);
             PubsubMessage pubsubMessage = PubsubMessage
                     .newBuilder()
@@ -99,22 +93,5 @@ public class GcPubSubEventListenerProvider implements EventListenerProvider {
                 }
             }
         }
-
-    }
-
-    private Publisher getPublisher(TopicName topicName) throws IOException {
-        String hostport = System.getenv("PUBSUB_EMULATOR_HOST");
-        if (hostport != null) {
-            ManagedChannel channel = ManagedChannelBuilder.forTarget(hostport).usePlaintext().build();
-            TransportChannelProvider channelProvider = FixedTransportChannelProvider.create(GrpcTransportChannel.create(channel));
-            CredentialsProvider credentialsProvider = NoCredentialsProvider.create();
-            return Publisher.newBuilder(topicName)
-                    .setChannelProvider(channelProvider)
-                    .setCredentialsProvider(credentialsProvider)
-                    .build();
-        }
-        return Publisher
-                .newBuilder(topicName)
-                .build();
     }
 }
