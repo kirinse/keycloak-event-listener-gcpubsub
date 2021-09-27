@@ -9,15 +9,15 @@
     
     <name>Keycloak: Event Publisher to Google Cloud Pub Sub</name>
     <properties>
-    	<keycloak.version>12.0.4</keycloak.version>
+    	<keycloak.version>15.0.2</keycloak.version>
     	<jar.finalName>${project.artifactId}-${project.version}</jar.finalName>
     </properties>
     
 	<distributionManagement>
 	   <repository>
 	     <id>github</id>
-	     <name>GitHub acesso-io Apache Maven Packages</name>
-	     <url>https://maven.pkg.github.com/acesso-io/keycloak-event-listener-gcpubsub</url>
+	     <name>GitHub kirinse Apache Maven Packages</name>
+	     <url>https://maven.pkg.github.com/kirinse/keycloak-event-listener-gcpubsub</url>
 	   </repository>
 	</distributionManagement>
 	
@@ -26,7 +26,7 @@
           <dependency>
             <groupId>com.google.cloud</groupId>
             <artifactId>libraries-bom</artifactId>
-            <version>19.0.0</version>
+            <version>23.0.0</version>
             <type>pom</type>
             <scope>import</scope>
           </dependency>
@@ -86,27 +86,58 @@
             </plugin>
             
             <!-- Maven Assembly Plugin -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<finalName>${jar.finalName}</finalName>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-					<appendAssemblyId>false</appendAssemblyId>
-				</configuration>
-				<executions>
-				  <execution>
-					<id>make-assembly</id>
-					<phase>package</phase>
-					<goals>
-						<goal>single</goal>
-					</goals>
-				  </execution>
-				</executions>
-			</plugin>
-			
+<!--			<plugin>-->
+<!--				<groupId>org.apache.maven.plugins</groupId>-->
+<!--				<artifactId>maven-assembly-plugin</artifactId>-->
+<!--                <version>3.3.0</version>-->
+<!--				<configuration>-->
+<!--					<finalName>${jar.finalName}</finalName>-->
+<!--					<descriptorRefs>-->
+<!--						<descriptorRef>jar-with-dependencies</descriptorRef>-->
+<!--					</descriptorRefs>-->
+<!--					<appendAssemblyId>true</appendAssemblyId>-->
+<!--				</configuration>-->
+<!--				<executions>-->
+<!--				  <execution>-->
+<!--					<id>make-assembly</id>-->
+<!--					<phase>package</phase>-->
+<!--					<goals>-->
+<!--						<goal>single</goal>-->
+<!--					</goals>-->
+<!--				  </execution>-->
+<!--				</executions>-->
+<!--			</plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                    <resource>META-INF/services/io.grpc.LoadBalancerProvider</resource>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
                 <artifactId>wildfly-maven-plugin</artifactId>
